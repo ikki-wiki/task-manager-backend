@@ -2,12 +2,11 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
-dotenv.config(); // Make sure env variables are loaded
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Trim the frontend URL to remove any trailing whitespace
 const allowedOrigins = [
   "http://localhost:5173", // local dev
   process.env.FRONTEND_URL?.trim() // production frontend
@@ -15,17 +14,23 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    // allow requests with no origin (like Postman)
+    // Allow requests with no origin (Postman, server-to-server)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      console.error(`Blocked by CORS: ${origin}`);
-      callback(new Error(`CORS blocked: ${origin}`));
+      console.warn(`Blocked by CORS: ${origin}`);
+      // Instead of throwing an Error, just reject
+      callback(null, false);
     }
   }
 }));
 
 app.use(express.json());
+
+app.use((req, res, next) => {
+  console.log("Request origin:", req.headers.origin);
+  next();
+});
 
 // Routes
 app.get("/", (req: Request, res: Response) => {
