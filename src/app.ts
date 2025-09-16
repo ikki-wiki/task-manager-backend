@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 5000;
 // ✅ Middlewares
 const allowedOrigins = [
   "http://localhost:5173", // local dev
-  "https://task-manager-frontend-psi-neon.vercel.app/" // your live site
+  "https://task-manager-frontend-psi-neon.vercel.app" // your live site
 ];
 
 app.use(cors({
