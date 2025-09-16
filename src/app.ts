@@ -1,13 +1,16 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config(); // Make sure env variables are loaded
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Allowed origins for CORS
+// Trim the frontend URL to remove any trailing whitespace
 const allowedOrigins = [
   "http://localhost:5173", // local dev
-  process.env.FRONTEND_URL  // production frontend
+  process.env.FRONTEND_URL?.trim() // production frontend
 ];
 
 app.use(cors({
@@ -16,6 +19,7 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.error(`Blocked by CORS: ${origin}`);
       callback(new Error(`CORS blocked: ${origin}`));
     }
   }
@@ -23,7 +27,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// ✅ Routes
+// Routes
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World from Express + TypeScript!");
 });
