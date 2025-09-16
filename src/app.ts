@@ -4,18 +4,19 @@ import cors from "cors";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ Middlewares
+// Allowed origins for CORS
 const allowedOrigins = [
   "http://localhost:5173", // local dev
-  "https://task-manager-frontend-psi-neon.vercel.app" // your live site
+  process.env.FRONTEND_URL  // production frontend
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
+    // allow requests with no origin (like Postman)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error(`CORS blocked: ${origin}`));
     }
   }
 }));
