@@ -1,28 +1,23 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { connectDB } from "./db.ts";
+import { tasksRouter, settingsRouter, homeRouter} from "./routes/index.ts";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true
-}));
+connectDB();
 
+app.use(cors());
 app.use(express.json());
 
-app.use((req, res, next) => {
-  console.log("Request origin:", req.headers.origin);
-  next();
-});
-
 // Routes
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World from Express + TypeScript!");
-});
+app.use("/", homeRouter);
+app.use("/tasks", tasksRouter);
+app.use("/settings", settingsRouter);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
